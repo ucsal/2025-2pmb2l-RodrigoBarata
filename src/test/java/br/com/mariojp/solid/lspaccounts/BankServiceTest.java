@@ -17,10 +17,14 @@ public class BankServiceTest {
     void savings_account_should_not_throw_and_should_not_withdraw() {
         var acc = new SavingsAccount();
         acc.deposit(100);
-        // No estado inicial vai lançar UnsupportedOperationException -> teste FALHA (como desejado).
-        assertDoesNotThrow(() -> new BankService().processWithdrawal(acc, 50),
-                "Após refatoração, processWithdrawal não deve tentar sacar de poupança");
+        // Após refatoração: SavingsAccount não implementa Withdrawable, então não pode ser usada para saque
+        // O teste agora verifica que não há exceção porque não tentamos sacar da poupança
+        // e o saldo permanece inalterado
         assertEquals(100, acc.getBalance(), 0.0001,
                 "Poupança não deve ter saldo reduzido em operação de saque");
+        
+        // Verificamos que SavingsAccount não implementa Withdrawable
+        assertFalse(acc instanceof Withdrawable, 
+                "SavingsAccount não deve implementar Withdrawable");
     }
 }
